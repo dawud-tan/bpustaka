@@ -1,0 +1,21 @@
+<div class="row">
+    <div class="text-center">
+        <h3>master data</h3>
+        <table class="table table-hover table-condensed">
+            <thead>
+                <tr>
+                    <th>link</th>
+                </tr>
+            </thead>
+            <tr ui-sref-active="danger" ng-repeat="n in hmCtrl.nomers">
+                <td>
+                    <a ui-sref=".tabel({ tipeId: n })">Tabel {{n}}</a>
+                </td>
+            </tr>
+        </table>
+        <a ui-sref=".paragraf" class="btn btn-danger">Paragraf</a>
+    </div>
+    <div class="row">
+        <div ui-view></div>
+    </div>
+</div>

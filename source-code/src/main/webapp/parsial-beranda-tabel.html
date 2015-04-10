@@ -1,0 +1,26 @@
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nama Kolom</th>
+            <th>Nilai Kolom</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Rupiah</td>
+            <td ng-bind="hrd.reply.prettifyAmount()"></td>
+        </tr>
+        <tr>
+            <td>Tanggal</td>
+            <td ng-bind="hrd.reply.col_date | date:'fullDate'"></td>
+        </tr>
+        <tr>
+            <td>Pecahan</td>
+            <td ng-bind="hrd.reply.col_float | number:2"></td>
+        </tr>
+        <tr>
+            <td>Bulat</td>
+            <td ng-bind="hrd.reply.col_bigint"></td>
+        </tr>
+    </tbody>
+</table>

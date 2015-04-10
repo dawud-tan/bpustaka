@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html ng-app="notesApp" lang="in_ID">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pusataka</title>
+    <link rel="stylesheet" href="./resources/css/bootstrap.min.css">
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+	      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+	      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+	      <![endif]-->
+    <link rel="stylesheet" href="./resources/css/lppi.css">
+</head>
+
+<body class="container-fluid">
+    <nav class="navbar navbar-inverse navbar-static-top" ng-controller="HomeController as hmCtrl" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" ng-click="hmCtrl.isCollapsed = !hmCtrl.isCollapsed">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" class="nav-collapse" ui-sref="beranda">PMB</a>
+            </div>
+            <div id="navbar" class="navbar-collapse" ng-class="hmCtrl.isCollapsed ? 'collapse' : 'in'">
+                <ul class="nav navbar-nav">
+                    <li ui-sref-active="active"><a ui-sref="beranda">Beranda</a></li>
+                    <li ui-sref-active="active"><a ui-sref="tentang">Tentang</a></li>
+                    <li class="dropdown" dropdown on-toggle="toggled(open)">
+                        <a href class="dropdown-toggle" dropdown-toggle>
+	  									Dropdown <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li ui-sref-active="active"><a ui-sref="satu">Action</a></li>
+                            <li class="divider"></li>
+                            <li class="dropdown-header">Nav header</li>
+                            <li ui-sref-active="active"><a ui-sref="dua">Separated link</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="well" ui-view></div>
+        </div>
+    </div>
+    <script src="./resources/js/angular.min.js"></script>
+    <script src="./resources/js/ui-bootstrap-tpls.min.js"></script>
+    <script src="./resources/js/angular-ui-router.min.js"></script>
+    <script type="text/javascript">
+    'use strict';
+    var note = angular.module('notesApp', ['ui.router', 'ui.bootstrap']);
+    note.config(function($stateProvider, $urlRouterProvider) {
+        $urlRouterProvider.otherwise('/beranda');
+        $stateProvider
+            .state('beranda', {
+                url: '/beranda',
+                templateUrl: 'parsial-beranda.html',
+                controller: 'HomeController as hmCtrl'
+            })
+            .state('beranda.tabel', {
+                url: '/:tipeId',
+                templateUrl: 'parsial-beranda-tabel.html',
+                resolve: {
+                    tipenya: function(TipeService, $stateParams) {
+                        return TipeService.getTipenya($stateParams.tipeId);
+                    }
+                },
+                controller: 'berandaController',
+                controllerAs: 'hrd'
+            })
+            .state('beranda.paragraf', {
+                template: 'Aku yakin bisa minum sekarang.'
+            })
+            .state('tentang', {
+                url: '/tentang',
+                views: {
+                    '': {
+                        templateUrl: 'parsial-tentang.html',
+                    },
+                    'kolomPertama@tentang': {
+                        template: '<guna-stock></guna-stock>'
+                    },
+                    'kolomKedua@tentang': {
+                        template: 'sasa'
+                    }
+                }
+            })
+            .state('satu', {
+                template: 'One'
+            })
+            .state('dua', {
+                template: 'two'
+            });
+    });
+
+    note.controller('HomeController', function($scope) {
+        var self = this;
+        self.nomers = [1, 2];
+        self.isCollapsed = true;
+        $scope.$on('$stateChangeSuccess', function() {
+            self.isCollapsed = true;
+        });
+    });
+
+    note.controller('berandaController', function(tipenya) {
+        var self = this;
+        self.reply = tipenya;
+    });
+
+    note.service('TipeService', function($filter) {
+        this.getTipenya = function(id) {
+            return {
+                prettifyAmount: function() {
+                    return $filter('currency')(2345 * id);
+                },
+                col_date: 1288323623006,
+                col_float: 54.336 * id,
+                col_bigint: 54 * id
+            };
+        };
+    });
+
+    note.directive('gunaStock', [function() {
+        return {
+            restrict: 'E',
+            scope: {},
+            bindToController: true,
+            template: '<h3>List of Stocks</h3>\
+ 			           <div ng-repeat = "k in mainC.ajiku">\
+ 			           <stock-widget stock="k" stock-title="Stock {{$index}}.{{k.name}}" when-select="mainC.onStockSelect(stockPrevious, stockPrice, stockName)"></stock-widget>\
+ 			           </div>\
+ 			           <button ng-click="mainC.changeAllStocks()">\
+ 			           		Change All Stock From Controller\
+ 			           </button>\
+ 			           <button ng-click="mainC.changeFirstStock()">\
+                        Change First Stock From Controller\
+                        </button>',
+            controller: function() {
+                var self = this;
+                self.ajiku = [{
+                    name: 'satu',
+                    price: 100,
+                    previous: 90
+                }, {
+                    name: 'dua',
+                    price: 200,
+                    previous: 180
+                }];
+                self.onStockSelect = function(pre, price, name) {
+                    console.log('Selected Price ', price, ' Name ', name, ' pre ', pre);
+                };
+                self.changeFirstStock = function() {
+                    self.ajiku[0].price *= 0.5;
+                };
+                self.changeAllStocks = function() {
+                    for (var i = 0; i < 2; i++) {
+                        self.ajiku[i] = {
+                            name: 'Controller Stock',
+                            price: 200,
+                            previous: 250
+                        };
+                    }
+                };
+            },
+            controllerAs: 'mainC'
+        };
+    }]);
+
+    note.directive('stockWidget', [function() {
+        return {
+            restrict: 'E',
+            bindToController: true,
+            scope: {
+                stock: '=',
+                stockTitle: '@',
+                whenSelect: '&'
+            },
+            controller: function() {
+                var self = this;
+                self.getChange = function(stock) {
+                    return Math.ceil(((stock.price - stock.previous) /
+                        stock.previous) * 100);
+                };
+                self.onSelect = function() {
+                    self.stockTitle += ' ' + self.stock.price;
+                    self.whenSelect({
+                        stockName: self.stockTitle,
+                        stockPrice: self.stock.price,
+                        stockPrevious: self.stock.previous
+                    });
+                };
+            },
+            controllerAs: 'ctrl',
+            template: '<div class="stock-dash">\
+						    <span>Name:</span>\
+						    <span class="stock-name" ng-bind="ctrl.stockTitle"></span>\
+						    <span>Price:</span>\
+						    <span class="stock-price" ng-bind="ctrl.stock.price | currency"></span>\
+						    <span>Percentage Change:</span>\
+						    <span class="stock-change" ng-bind="ctrl.getChange(ctrl.stock) + \'%\'"></span>\
+						    <button ng-click="ctrl.onSelect()">Select me</button>\
+						</div>'
+        };
+    }]);
+    </script>
+</body>
+
+</html>

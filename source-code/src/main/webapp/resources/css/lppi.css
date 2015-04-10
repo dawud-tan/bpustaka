@@ -1,0 +1,11 @@
+body {
+    background: url("http://beta-pmb.ums.ac.id/wp-content/uploads/2015/02/pattern.jpg") repeat scroll left top transparent;
+ 
+}
+
+.nav,
+.pagination,
+.carousel,
+.panel-title a {
+    cursor: pointer;
+}
